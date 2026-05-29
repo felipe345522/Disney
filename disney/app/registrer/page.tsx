@@ -5,15 +5,15 @@ import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [nombre, setNombre] = useState("");
   const [message, setMessage] = useState("");
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!email || !password || !nombre) {
+    if (!nombre || !email || !password) {
       setMessage("Por favor completa todos los campos");
       return;
     }
@@ -21,7 +21,7 @@ export default function RegisterPage() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { nombre } }
+      options: { data: { nombre } },
     });
 
     if (error) {
@@ -32,7 +32,7 @@ export default function RegisterPage() {
     // Insertar en tabla usuarios
     if (data.user) {
       await supabase.from("usuarios").insert([
-        { id: data.user.id, email, nombre }
+        { id: data.user.id, nombre, email },
       ]);
     }
 
